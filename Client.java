@@ -1,21 +1,55 @@
-import java.io.DataInputStream;
-import java.net.Socket;
+
+// Java program to illustrate Client side 
+// Implementation using DatagramSocket 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
 
 public class Client {
+	public static void main(String args[]) throws IOException {
+		Scanner sc = new Scanner(System.in);
 
-	static Socket socket;
-	static DataInputStream in;
+		// Step 1:Create the socket object for
+		// carrying the data.
+		DatagramSocket ds = new DatagramSocket();
+//		System.out.println("Enter public IP: ");
+//		String address = sc.nextLine();
+		InetAddress ip = InetAddress.getByName("24.59.59.55");
+		byte buf[] = null;
 
-	public static void main(String[] args) throws Exception {
+		// loop while user not enters "bye"
+		while (true) {
+			String inp = sc.nextLine();
+			// convert the String input into the byte array.
+			buf = inp.getBytes();
+			// Step 2 : Create the datagramPacket for sending
+			// the data.
+			DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 7777);
+			// Step 3 : invoke the send call to actually send
+			// the data.
+			ds.send(DpSend);
+			byte[] receive = new byte[65535];
+			DatagramPacket DpReceive = new DatagramPacket(receive, receive.length);
+			ds.receive(DpReceive);
+			System.out.println("Server:-" + data(receive));
 
-		System.out.println("Connecting...");
-		socket = new Socket("192.168.0.166", 7777);
-		socket.setSoTimeout(10 * 1000);
-		System.out.println("Connection Successful.");
-		in = new DataInputStream(socket.getInputStream());
-		System.out.println("Receiving information...");
-		String test = in.readUTF();
-		System.out.println("Message from server: " + test);
+			// break the loop if user enters "bye"
+			if (inp.equals("bye"))
+				break;
+		}
 	}
 
+	public static StringBuilder data(byte[] a) {
+		if (a == null)
+			return null;
+		StringBuilder ret = new StringBuilder();
+		int i = 0;
+		while (a[i] != 0) {
+			ret.append((char) a[i]);
+			i++;
+		}
+		return ret;
+	}
 }
