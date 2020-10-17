@@ -1,6 +1,7 @@
 
 // Java program to illustrate Client side 
 // Implementation using DatagramSocket 
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -8,48 +9,52 @@ import java.net.InetAddress;
 import java.util.Scanner;
 
 public class Client {
-	public static void main(String args[]) throws IOException {
-		Scanner sc = new Scanner(System.in);
+    public static void main(String args[]) throws IOException {
+        Scanner sc = new Scanner(System.in);
 
-		// Step 1:Create the socket object for
-		// carrying the data.
-		DatagramSocket ds = new DatagramSocket();
+        // Step 1:Create the socket object for
+        // carrying the data.
+        DatagramSocket ds = new DatagramSocket();
 //		System.out.println("Enter public IP: ");
 //		String address = sc.nextLine();
-		InetAddress ip = InetAddress.getByName("24.59.59.55");
-		byte buf[] = null;
+        InetAddress ip = InetAddress.getByName("24.59.59.55");
+        byte buf[] = null;
 
-		// loop while user not enters "bye"
-		while (true) {
-			String inp = sc.nextLine();
-			// convert the String input into the byte array.
-			buf = inp.getBytes();
-			// Step 2 : Create the datagramPacket for sending
-			// the data.
-			DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 7777);
-			// Step 3 : invoke the send call to actually send
-			// the data.
-			ds.send(DpSend);
-			byte[] receive = new byte[65535];
-			DatagramPacket DpReceive = new DatagramPacket(receive, receive.length);
-			ds.receive(DpReceive);
-			System.out.println("Server:-" + data(receive));
+        // loop while user not enters "bye"
+        while (true) {
+            String inp = sc.nextLine();
+            // convert the String input into the byte array.
+            buf = inp.getBytes();
+            // Step 2 : Create the datagramPacket for sending
+            // the data.
+            DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 7777);
+            // Step 3 : invoke the send call to actually send
+            // the data.
+            ds.send(DpSend);
+            byte[] receive = new byte[65535];
+            // break the loop if user enters "bye"
+            if (inp.equals("bye")) {
+                break;
+            }
+            // will print what the server sent to the client
+            DatagramPacket DpReceive = new DatagramPacket(receive, receive.length);
+            ds.receive(DpReceive);
+            System.out.println("Server:-" + data(receive));
 
-			// break the loop if user enters "bye"
-			if (inp.equals("bye"))
-				break;
-		}
-	}
+            // break the loop if user enters "bye"
 
-	public static StringBuilder data(byte[] a) {
-		if (a == null)
-			return null;
-		StringBuilder ret = new StringBuilder();
-		int i = 0;
-		while (a[i] != 0) {
-			ret.append((char) a[i]);
-			i++;
-		}
-		return ret;
-	}
+        }
+    }
+
+    public static StringBuilder data(byte[] a) {
+        if (a == null)
+            return null;
+        StringBuilder ret = new StringBuilder();
+        int i = 0;
+        while (a[i] != 0) {
+            ret.append((char) a[i]);
+            i++;
+        }
+        return ret;
+    }
 }
